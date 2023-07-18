@@ -1,2 +1,2 @@
-# dori-backend
-Backend for the Dori application developed for the Sword AI Challenge '23.
+# dory-backend
+Backend for the Dory application developed for the Sword AI Challenge '23.
