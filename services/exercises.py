@@ -3,6 +3,7 @@ import re
 
 from flask import jsonify, request
 
+from dal import dal
 from services.agents import (
     exercises_model,
     exercises_system_prompt,
@@ -19,23 +20,35 @@ class Exercises:
         """
         n: int = request.args.get("n", 1)
 
+        # Get existing exercises names
+        exercises_names = ", ".join(dal.get_exercises_names())
+
         # Generate new exercises
         response = GPT(exercises_model).chat_completion(
             [
-                ("system", exercises_system_prompt),
+                (
+                    "system",
+                    exercises_system_prompt.format(exercises_names=exercises_names),
+                ),
                 ("user", exercises_user_prompt.format(n=n)),
             ]
         )
+        print(response)
 
-        # Parse JSON to list of dicts
-        exercises = json.loads(response)
+        # Parse JSONL to list of dicts
+        exercises = [
+            json.loads(exercise)
+            for exercise in re.sub("\n+", "\n", response).splitlines()
+        ]
 
         # Add exercises to database
+        dal.add_exercise(exercises)
 
         # Return exercises
-        return jsonify(exercises)
+        return jsonify({"exercises": exercises})
 
     @staticmethod
     def get():
         """Get exercises from database."""
-        pass
+        exercises = dal.get_exercises()
+        return jsonify({"exercises": exercises})

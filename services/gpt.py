@@ -24,7 +24,7 @@ class GPT:
         messages: list[tuple[str, str]],
         n_samples: int = 1,
         temperature: float = 0.3,
-        top_p: float = 1.0,
+        top_p: float = 0.9,
         max_tokens=1024,
         frequency_penalty: float = 0.0,
         presence_penalty: float = 0.0,

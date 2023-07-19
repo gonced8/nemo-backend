@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from dal import DAL
+from dal import dal
 import json
 from services.gpt import GPT
 from services.agents import (
@@ -11,33 +11,35 @@ from services.agents import (
 class Onboarding:
     @staticmethod
     def chat(user_id):
+        # TODO get response in the right format
         """Onboarding function that asks essential questions to the user and saves the answers to the database"""
-        overallOnboardingDone = DAL.get_user(user_id=user_id)["OnboardingStatus"]
+        overallOnboardingDone = dal.get_user(user_id=user_id)["onboarding_status"]
 
         if not overallOnboardingDone:
             # Get previous messages
             messages = [
                 (message["role"], message["message"])
-                for message in DAL.get_messages(user_id, "onboarding")
+                for message in dal.get_messages(user_id, "onboarding")
             ]
-
+            print("Retrieved Messages ", messages)
             if len(messages) == 0:
                 pass
             # If an onboarding is already happening, then we need to add the new message to the previous messages
             else:
-                messages += ("user", request.json["message"])
+                message = request.json["message"]
                 new_message = {
                     "user_id": user_id,
-                    "message": messages,
+                    "message": message,
                     "agent": "onboarding",
                     "role": "user",
                 }
-                DAL.add_message(message=new_message)
+                messages.append(("user", message))
+                dal.add_message(message=new_message)
 
             messages = [("system", onboarding_prompt)] + messages
             print("Messages ", messages)
             response = GPT(onboarding_model).chat_completion(messages)
-
+            print("Response ", response)
             response = json.loads(response)
 
             nextQuestion = response.get("nextQuestion", None)
@@ -54,9 +56,9 @@ class Onboarding:
                     "user_id": user_id,
                     "message": nextQuestion,
                     "agent": "onboarding",
-                    "role": "system",
+                    "role": "assistant",
                 }
-                DAL.add_message(message)
+                dal.add_message(message)
 
             if retrievedFacts:
                 info = [
@@ -68,7 +70,7 @@ class Onboarding:
                     }
                     for fact in retrievedFacts
                 ]
-                DAL.add_info(info)
+                dal.add_info(info)
 
             if personalityType:
                 persona_info = {
@@ -77,12 +79,12 @@ class Onboarding:
                     "agent": "onboarding",
                     "tag": "personality_traits",
                 }
-                DAL.add_info(persona_info)
+                dal.add_info(persona_info)
 
             if bool(overallOnboardingDone):
-                user = DAL.get_user(user_id=user_id)
+                user = dal.get_user(user_id=user_id)
                 user["OnboardingStatus"] = True
-                DAL.update_user(user)
+                dal.update_user(user)
 
             return jsonify(
                 {
