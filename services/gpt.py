@@ -1,40 +1,33 @@
-import openai
 import os
-from dotenv import load_dotenv
+
+import openai
 from tenacity import retry, stop_after_attempt
-from typing import List, Tuple, Union
-from agents import OnboardingValue
-openai.organization = os.getenv("OpenAI-Organization")
+
+openai.organization = os.getenv("OPENAI_API_ORG")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+
 class GPT:
-    
     def __init__(
         self,
         openai_model: str = "gpt-3.5-turbo",
-        api_org: str = None,
-        api_key: str = None,
     ):
         self.openai_model = openai_model
-        
-        
+
     @retry(stop=stop_after_attempt(10))
-    def chat_completion(self,
+    def chat_completion(
+        self,
         messages: list,
-        agent: OnboardingValue,
         n_samples: int = 1,
         temperature: float = 0.3,
         top_p: float = 1.0,
         max_tokens=1024,
         frequency_penalty: float = 0.0,
-        presence_penalty: float = 0.0
-    ):
-
-        messages = self.messages_to_prompt(messages)
-        
+        presence_penalty: float = 0.0,
+    ) -> str:
         openai_args = {
             "model": self.openai_model,
-            "messages": messages,
+            "messages": self.messages_to_prompt(messages),
             "temperature": temperature,
             "n": n_samples,
             "top_p": top_p,
@@ -45,10 +38,9 @@ class GPT:
 
         response = openai.ChatCompletion.create(**openai_args)
         return response["choices"][0]["message"]["content"]
-        
-        
-        def messages_to_prompt(messages:list):
-        #TODO
+
+    def messages_to_prompt(
+        self, messages: list[tuple[str, str]]
+    ) -> list[dict[str, str]]:
         # Messages to prompt with roles
-        # recover messages from database
-            pass
+        return [{"role": role, "content": content} for role, content in messages]
