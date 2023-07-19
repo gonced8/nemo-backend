@@ -65,5 +65,26 @@ class DAL:
         exercises = self.supabase.table("exercises").select("exercise_name").execute()
         return [exercise["exercise_name"] for exercise in exercises.data]
 
+    def add_plans(self, plans: list[dict]):
+        """Adds plans to plans table"""
+        self.supabase.table("plans").insert(plans).execute()
+
+    def get_plans(self, user_id: str) -> list[dict]:
+        """Get plans of user_id from plans table"""
+        plans = (
+            self.supabase.table("plans").select("*").eq("user_id", user_id).execute()
+        )
+        return plans.data
+
+    def get_plans_names(self, user_id: str) -> list[str]:
+        """Get plans names of user_id from plans table"""
+        plans = (
+            self.supabase.table("plans")
+            .select("plan_name")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        return [plan["plan_name"] for plan in plans.data]
+
 
 dal = DAL()

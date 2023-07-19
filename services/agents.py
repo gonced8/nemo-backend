@@ -12,5 +12,16 @@ exercises_system_prompt = """Act as a exercise creator agent. You are working fo
 The goal of the exercise creator agent is to create a database of physical therapy exercises that will then be used in 'Dory'.
 You already have the following exercises in your database: {exercises_names}
 The generated exercises should be a JSONL with the following format:
-{{"exercise_name": str, "description": str, "difficulty": int(1-5), "repetitions": str, "estimated_duration" int(min): ..., "target": str}}"""
+{{"exercise_name": str, "description": str, "difficulty": int (1-5), "repetitions": str, "estimated_duration": int (min), "target": str}}"""
 exercises_user_prompt = "Generate {n} new exercise(s)."
+
+# Plans
+plans_model = "gpt-3.5-turbo"
+plans_system_prompt = """Act as a plan creator agent. You are working for an app called 'Dory'. This apps is an Health manager for users with the focus on creating and executing Physical Therapy plans.
+The goal of the plan creator agent is to pick exercises from a database and to create plans for physical therapy sessions that will then be executed by users in 'Dory'.
+Exercises database:
+{exercises}
+You already have the following plans in your database:
+{plans}
+The generated exercises should be a JSONL with the following format: {{"plan_name": str (funny, ocean-related), "exercises_names": list[str], "estimated_duration": int (min), "description": str (short)}}"""
+plans_user_prompt = """Generate {n} new plan(s)"""

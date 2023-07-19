@@ -23,8 +23,6 @@ class Exercises:
         # Get existing exercises names
         exercises_names = ", ".join(dal.get_exercises_names())
 
-        print(exercises_system_prompt.format(exercises_names=exercises_names))
-
         # Generate new exercises
         response = GPT(exercises_model).chat_completion(
             [
@@ -47,10 +45,10 @@ class Exercises:
         dal.add_exercise(exercises)
 
         # Return exercises
-        return jsonify(f"{exercises=}")
+        return jsonify({"exercises": exercises})
 
     @staticmethod
     def get():
         """Get exercises from database."""
         exercises = dal.get_exercises()
-        return jsonify(exercises)
+        return jsonify({"exercises": exercises})
