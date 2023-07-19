@@ -21,7 +21,7 @@ class GPT:
     @retry(stop=stop_after_attempt(10))
     def chat_completion(
         self,
-        messages: list,
+        messages: list[tuple[str, str]],
         n_samples: int = 1,
         temperature: float = 0.3,
         top_p: float = 1.0,
