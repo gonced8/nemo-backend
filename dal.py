@@ -50,5 +50,41 @@ class DAL:
             {"user_id": user_id, "message": message, "agent": agent, "speaker": speaker}
         ).execute()
 
+    def add_exercise(self, exercise: list | dict):
+        """Adds exercise to exercises table"""
+        print(exercise)
+        self.supabase.table("exercises").insert(exercise).execute()
+
+    def get_exercises(self) -> list[dict]:
+        """Get exercises from exercises table"""
+        exercises = self.supabase.table("exercises").select("*").execute()
+        return exercises.data
+
+    def get_exercises_names(self) -> list[str]:
+        """Get exercise names from exercises table"""
+        exercises = self.supabase.table("exercises").select("exercise_name").execute()
+        return [exercise["exercise_name"] for exercise in exercises.data]
+
+    def add_plans(self, plans: list[dict]):
+        """Adds plans to plans table"""
+        self.supabase.table("plans").insert(plans).execute()
+
+    def get_plans(self, user_id: str) -> list[dict]:
+        """Get plans of user_id from plans table"""
+        plans = (
+            self.supabase.table("plans").select("*").eq("user_id", user_id).execute()
+        )
+        return plans.data
+
+    def get_plans_names(self, user_id: str) -> list[str]:
+        """Get plans names of user_id from plans table"""
+        plans = (
+            self.supabase.table("plans")
+            .select("plan_name")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        return [plan["plan_name"] for plan in plans.data]
+
 
 dal = DAL()

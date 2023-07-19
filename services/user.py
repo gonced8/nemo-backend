@@ -3,7 +3,7 @@ from flask import jsonify, request
 from dal import dal
 
 
-class User:
+class Users:
     @staticmethod
     def add():
         """Register new user"""
