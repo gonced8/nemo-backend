@@ -19,9 +19,8 @@ def add_user(username: str):
     user = supabase.table('users').insert({'username': username}).execute()
     return user.data[0]
 
-        
-# def save_message(user_id: str, message: str):
-#     """Save message to messages table"""
-#     supabase.table('messages').insert({'user_id': user_id, 'message': message, 'agent':o}).execute()
+def save_message(user_id: str, message: str, agent: str):
+    """Save message to messages table"""
+    supabase.table('messages').insert({'user_id': user_id, 'message': message, 'agent':agent}).execute()
         
 
