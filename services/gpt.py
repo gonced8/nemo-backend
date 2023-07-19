@@ -1,7 +1,11 @@
 import os
 
 import openai
+from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt
+
+# Load .env file
+load_dotenv()
 
 openai.organization = os.getenv("OPENAI_API_ORG")
 openai.api_key = os.getenv("OPENAI_API_KEY")
