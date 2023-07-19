@@ -50,5 +50,20 @@ class DAL:
             {"user_id": user_id, "message": message, "agent": agent, "speaker": speaker}
         ).execute()
 
+    def add_exercise(self, exercise: list | dict):
+        """Adds exercise to exercises table"""
+        print(exercise)
+        self.supabase.table("exercises").insert(exercise).execute()
+
+    def get_exercises(self) -> list[dict]:
+        """Get exercises from exercises table"""
+        exercises = self.supabase.table("exercises").select("*").execute()
+        return exercises.data
+
+    def get_exercises_names(self) -> list[str]:
+        """Get exercise names from exercises table"""
+        exercises = self.supabase.table("exercises").select("exercise_name").execute()
+        return [exercise["exercise_name"] for exercise in exercises.data]
+
 
 dal = DAL()
