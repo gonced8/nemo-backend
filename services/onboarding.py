@@ -1,5 +1,8 @@
 from flask import jsonify, request
-from dal import get_user,get_messages
+
+from dal import get_messages, get_user
+
+
 def onboarding(user_id: str):
     """Onboarding function that asks essential questions to the user and saves the answers to the database"""
     username = request.json["username"]
@@ -9,7 +12,7 @@ def onboarding(user_id: str):
         pass
     else:
         pass
-        
+
     # Generate initial message from bot
     # Add message to supabase
     # Return starting message
