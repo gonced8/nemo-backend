@@ -24,3 +24,11 @@ def save_message(user_id: str, message: str, agent: str):
     supabase.table('messages').insert({'user_id': user_id, 'message': message, 'agent':agent}).execute()
         
 
+def get_messages(user_id: str, agent: str):
+    """Get messages from messages table""" 
+    messages = supabase.table('messages').select("*").eq('user_id', user_id).eq('agent', agent).execute()
+    return messages.data
+
+def add_message(user_id: str, message: str, agent: str,speaker:str):
+    """Add message to messages table"""
+    supabase.table('messages').insert({'user_id': user_id, 'message': message, 'agent':agent, 'speaker':speaker}).execute()

@@ -11,7 +11,6 @@ class GPT:
     
     def __init__(
         self,
-        prompt_template: str = "",
         openai_model: str = "gpt-3.5-turbo",
         api_org: str = None,
         api_key: str = None,
@@ -49,6 +48,7 @@ class GPT:
         
         
         def messages_to_prompt(messages:list):
+        #TODO
         # Messages to prompt with roles
         # recover messages from database
             pass
