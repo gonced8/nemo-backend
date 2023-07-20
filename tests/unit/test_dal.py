@@ -1,9 +1,7 @@
-import pytest
-
 from app.dal import dal
 
 
-def test_get_exercises(test_client):
+def test_get_exercises():
     """Test get_exercises function"""
     exercises = dal.get_exercises()
 
