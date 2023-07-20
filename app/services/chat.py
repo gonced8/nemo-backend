@@ -1,8 +1,9 @@
+import json
 from flask import jsonify, request
 from dal import dal
 import json
-from services.gpt import GPT
-from services.agents import (
+from app.services.gpt import GPT
+from app.services.agents import (
     chat_model,
     chat_prompt,
 )

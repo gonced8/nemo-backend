@@ -3,13 +3,13 @@ import re
 
 from flask import jsonify, request
 
-from dal import dal
-from services.agents import (
+from app.dal import dal
+from app.services.agents import (
     exercises_model,
     exercises_system_prompt,
     exercises_user_prompt,
 )
-from services.gpt import GPT
+from app.services.gpt import GPT
 
 
 class Exercises:
