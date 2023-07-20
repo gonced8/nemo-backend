@@ -1,11 +1,10 @@
-from flask import jsonify, request
-from dal import dal
 import json
-from services.gpt import GPT
-from services.agents import (
-    onboarding_model,
-    onboarding_prompt,
-)
+
+from flask import jsonify, request
+
+from app.dal import dal
+from app.services.agents import onboarding_model, onboarding_prompt
+from app.services.gpt import GPT
 
 
 class Chat:
