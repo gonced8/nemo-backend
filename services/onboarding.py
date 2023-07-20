@@ -30,8 +30,11 @@ class Onboarding:
                     personality_traits = dal.get_info_by_id(
                         message["id"], "personality_traits"
                     )
+
                     if personality_traits:
-                        message["message"]["personalityType"] = info[0]["info"]
+                        message["message"]["personalityType"] = personality_traits[0][
+                            "info"
+                        ]
                     message["message"] = json.dumps(
                         message["message"], ensure_ascii=False
                     )
@@ -110,7 +113,7 @@ class Onboarding:
             if bool(overallOnboardingDone):
                 user = dal.get_user(user_id=user_id)
                 user["OnboardingStatus"] = True
-                dal.update_user(user)
+                dal.update_user(user_id=user_id)
 
             return jsonify(
                 {

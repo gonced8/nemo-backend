@@ -104,5 +104,11 @@ class DAL:
         )
         return info.data
 
+    def update_user(self, user_id: str):
+        """Update user in users table"""
+        self.supabase.table("users").update({"onboarding_status": True}).eq(
+            "id", user_id
+        ).execute()
+
 
 dal = DAL()
