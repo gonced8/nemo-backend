@@ -12,6 +12,7 @@ class Onboarding:
     def chat(user_id):
         # TODO get response in the right format
         """Onboarding function that asks essential questions to the user and saves the answers to the database"""
+
         overallOnboardingDone = dal.get_user(user_id=user_id)["onboarding_status"]
         if not overallOnboardingDone:
             # Get previous messages
