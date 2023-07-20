@@ -15,7 +15,6 @@ class Onboarding:
         # TODO add message id into info
         """Onboarding function that asks essential questions to the user and saves the answers to the database"""
         overallOnboardingDone = dal.get_user(user_id=user_id)["onboarding_status"]
-
         if not overallOnboardingDone:
             # Get previous messages
             previous_messages = dal.get_messages(user_id, "onboarding")
@@ -60,6 +59,7 @@ class Onboarding:
                 message_id = dal.add_message(message=new_message)[0]["id"]
 
             messages = [("system", onboarding_prompt)] + messages
+            print("Messages to gpt ", messages)
             response = GPT(onboarding_model).chat_completion(messages)
             print("Response ", response)
             response = json.loads(response)
@@ -99,6 +99,7 @@ class Onboarding:
             if personalityType:
                 persona_info = {
                     "message_id": message_id,
+                    "call_id": next_question_id,
                     "user_id": user_id,
                     "info": personalityType,
                     "agent": "onboarding",

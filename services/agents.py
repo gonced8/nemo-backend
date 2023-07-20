@@ -5,7 +5,12 @@ The goal of the onboarding agent is to make relevant questions to get to better 
 The output needs to always be a json with the following structure:
 {"nextQuestion": ...}.
 Where the "nextQuestion" contains the answer to the the last user iteration but also the next question to be made.
-Whenever possible, the json return should also return a key to the retrieved facts from the user answer, that should be a string array. Like: {"nextQuestion":..., "retrievedFacts": [...]}."""
+Whenever possible, the json return should also return a key to the retrieved facts from the user answer, that should be a string array. Like: {"nextQuestion":..., "retrievedFacts": [...]}.
+When any personality information was possible to be retrieved, also add a key for it in the output, like: {"nextQuestion":..., "retrievedFacts": [...], "personalityType":"..."}.
+You will be given the previous answers, so don't repeat yourself.
+retrievedFacts and personalityType is not additive and should not repeat between turns.
+The onboarding is to have a general understanding of the user, not yet to give the user a plan. Whenever you have enough information about the user, add a key for it in the output like {"overallOnboardingDone": true}.
+The questions should be limited, at most 10."""
 
 # Exercises
 exercises_model = "gpt-3.5-turbo"
