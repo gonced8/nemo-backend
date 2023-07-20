@@ -1,5 +1,5 @@
 import os
-
+import uuid
 from dotenv import load_dotenv
 from supabase import Client, create_client
 
@@ -13,9 +13,34 @@ class DAL:
         key: str = os.environ.get("SUPABASE_KEY")
         self.supabase: Client = create_client(supabase_url=url, supabase_key=key)
 
+    # Checks if string is valid UUID:
+    def is_valid_uuid(self, uuid_to_test: str) -> bool:
+        """Check if uuid_to_test is a valid UUID."""
+        try:
+            uuid_obj = uuid.UUID(uuid_to_test)
+        except ValueError:
+            return False
+
+        return str(uuid_obj) == uuid_to_test
+
     def get_user(self, user_id: str):
         """ "Get user from user table and return None if doens't exist"""
-        user = self.supabase.table("users").select("*").eq("id", user_id).execute()
+
+        if self.is_valid_uuid(user_id.lower()):
+            user = (
+                self.supabase.table("users")
+                .select("*")
+                .eq("id", user_id.lower())
+                .execute()
+            )
+        else:
+            user = (
+                self.supabase.table("users")
+                .select("*")
+                .eq("username", user_id)
+                .execute()
+            )
+
         if len(user.data) == 0:
             return None
         return user.data[0]
@@ -90,12 +115,14 @@ class DAL:
     def get_info(self, user_id: str, agent: str):
         """Get info from info table"""
         if agent == "*":
-            info = self.supabase.table("info").select("*").eq("id", user_id).execute()
+            info = (
+                self.supabase.table("info").select("*").eq("user_id", user_id).execute()
+            )
         else:
             info = (
                 self.supabase.table("info")
                 .select("*")
-                .eq("id", user_id)
+                .eq("user_id", user_id)
                 .eq("agent", agent)
                 .execute()
             )
