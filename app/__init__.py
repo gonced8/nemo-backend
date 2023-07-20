@@ -12,6 +12,8 @@ def create_app() -> Flask:
 
     app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 
+    app.add_url_rule("/", "index", lambda: "Hello, world!", methods=["GET"])
+
     # Add routes
     # Chat
     app.add_url_rule("/users/<user_id>/chat", "chat", Chat.chat, methods=["POST"])
