@@ -38,7 +38,8 @@ class DAL:
 
     def add_message(self, message: dict):
         """Add message to messages table"""
-        self.supabase.table("messages").insert(message).execute()
+        message = self.supabase.table("messages").insert(message).execute()
+        return message.data
 
     def add_exercise(self, exercise: list | dict):
         """Adds exercise to exercises table"""
@@ -90,6 +91,17 @@ class DAL:
     def add_info(self, info) -> None:
         """Add info to info table"""
         self.supabase.table("info").insert(info).execute()
+
+    def get_info_by_id(self, message_id: str, tag: str) -> dict:
+        """Get info by id from info table"""
+        info = (
+            self.supabase.table("info")
+            .select("*")
+            .eq("call_id", message_id)
+            .eq("tag", tag)
+            .execute()
+        )
+        return info.data
 
 
 dal = DAL()
