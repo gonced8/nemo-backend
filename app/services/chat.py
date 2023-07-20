@@ -1,6 +1,6 @@
 import json
 from flask import jsonify, request
-from dal import dal
+from app.dal import dal
 import json
 from app.services.gpt import GPT
 from app.services.agents import (
