@@ -12,7 +12,6 @@ class Onboarding:
     @staticmethod
     def chat(user_id):
         # TODO get response in the right format
-        # TODO add message id into info
         """Onboarding function that asks essential questions to the user and saves the answers to the database"""
         overallOnboardingDone = dal.get_user(user_id=user_id)["onboarding_status"]
         if not overallOnboardingDone:

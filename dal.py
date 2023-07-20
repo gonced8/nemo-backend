@@ -27,14 +27,23 @@ class DAL:
 
     def get_messages(self, user_id: str, agent: str):
         """Get messages from messages table"""
-        messages = (
-            self.supabase.table("messages")
-            .select("*")
-            .eq("user_id", user_id)
-            .eq("agent", agent)
-            .order("created_at")
-            .execute()
-        )
+        if agent == "*":
+            messages = (
+                self.supabase.table("messages")
+                .select("*")
+                .eq("user_id", user_id)
+                .execute()
+            )
+
+        else:
+            messages = (
+                self.supabase.table("messages")
+                .select("*")
+                .eq("user_id", user_id)
+                .eq("agent", agent)
+                .order("created_at")
+                .execute()
+            )
         return messages.data
 
     def add_message(self, message: dict):
@@ -80,13 +89,16 @@ class DAL:
 
     def get_info(self, user_id: str, agent: str):
         """Get info from info table"""
-        info = (
-            self.supabase.table("info")
-            .select("*")
-            .eq("id", user_id)
-            .eq("agent", agent)
-            .execute()
-        )
+        if agent == "*":
+            info = self.supabase.table("info").select("*").eq("id", user_id).execute()
+        else:
+            info = (
+                self.supabase.table("info")
+                .select("*")
+                .eq("id", user_id)
+                .eq("agent", agent)
+                .execute()
+            )
         return info.data
 
     def add_info(self, info) -> None:
