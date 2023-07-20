@@ -3,9 +3,9 @@ import re
 
 from flask import jsonify, request
 
-from dal import dal
-from services.agents import plans_model, plans_system_prompt, plans_user_prompt
-from services.gpt import GPT
+from app.dal import dal
+from app.services.agents import plans_model, plans_system_prompt, plans_user_prompt
+from app.services.gpt import GPT
 
 
 class Plans:

@@ -1,6 +1,6 @@
 from flask import jsonify, request
 
-from dal import dal
+from app.dal import dal
 
 
 class Users:

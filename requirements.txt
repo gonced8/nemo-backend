@@ -1,5 +1,7 @@
 flask==2.2.3
 openai==0.27.8
+pytest-cov==4.1.0
+pytest==7.4.0
 python-dotenv==1.0.0
 supabase==1.0.3
 tenacity==8.2.2
