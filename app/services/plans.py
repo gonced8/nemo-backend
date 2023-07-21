@@ -18,7 +18,7 @@ class Plans:
     @staticmethod
     def get(user_id: str):
         """Get plans from database."""
-        plans = dal.get_plans()
+        plans = dal.get_plans(user_id=user_id)
         return jsonify({"plans": plans})
 
     @staticmethod

@@ -21,7 +21,7 @@ class GPT:
     @retry(stop=stop_after_attempt(10))
     def chat_completion(
         self,
-        messages: list[tuple[str, str]],
+        messages: list[tuple[str, str] | dict[str, str]],
         n_samples: int = 1,
         temperature: float = 0.3,
         top_p: float = 0.9,
@@ -29,9 +29,13 @@ class GPT:
         frequency_penalty: float = 0.0,
         presence_penalty: float = 0.0,
     ) -> str:
+        # Format messages to GPT format
+        if isinstance(messages[0], tuple) or isinstance(messages[0], list):
+            messages = self.messages_to_prompt(messages)
+
         openai_args = {
             "model": self.openai_model,
-            "messages": self.messages_to_prompt(messages),
+            "messages": messages,
             "temperature": temperature,
             "n": n_samples,
             "top_p": top_p,
