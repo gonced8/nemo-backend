@@ -54,15 +54,22 @@ scheduler_model = "gpt-4"
 scheduler_prompt = """Act as a scheduling agent. You need to schedule a training plan compliant with the information provided to you.
 
 Here is some information about the user time preferences:
-{time_preferences}
+{timePreferences}
 
 Taking into account that:
-1) Do not schedule training plans before 9am and after 10 pm
+1)Do not schedule training plans before 9am and after 10 pm
 2)User's calendar slots not available:
-{occupied_slots}
-3) Plan duration: {plan_duration} minutes
-4) Plan regularity: {periodicity} 
-5)Trainings cannot happen in consecutive days
+{notAvailableSlots}
+3)Plans duration and regularity: 
+{planInfo} 
+4)Trainings cannot happen in consecutive days
 
-Replace the entries  {{"scheduledDays":[(dayOfTheWeek,hour interval)]}}
+Return only a JSON with the format {{"scheduledDays":{{"plan": [ array(dayOfWeek, hourInterval,)}}}}.
 """
+# TimePreferences
+time_preferences_model = "gpt-4"
+time_preferences_prompt = """Choose the information entries that are related with time restrictions and time preferences. Don't return entries that contradict each other, always pick the most recent one.
+
+{timeInfo}
+
+Return a JSON file with the format with the key timeInfo and a list of chosen information."""

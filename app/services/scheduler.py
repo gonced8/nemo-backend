@@ -3,57 +3,64 @@ import json
 from flask import jsonify, request
 
 from app.dal import dal
-from app.services.agents import scheduler_model, scheduler_prompt
+from app.services.agents import (
+    scheduler_model,
+    scheduler_prompt,
+    time_preferences_model,
+    time_preferences_prompt,
+)
 from app.services.gpt import GPT
 
 
 class Scheduler:
     @staticmethod
     def call(user_id: str):
-        # TODO COPILIT Function NEEDS A LOT OF WORK
-        """Schedule a plan for the user and returns the schedule."""
+        """Call the scheduler agent and returns a schedule for the user."""
+
+        # Get user plans
+        planInfo = [
+            (plan["plan_name"], plan["estimated_duration"])
+            for plan in dal.get_plans(user_id)
+        ]
+
         # Get user time preferences
-        time_preferences = dal.get_time_preferences(user_id)
-        time_preferences = "\n".join(
-            json.dumps(time_preference) for time_preference in time_preferences
+        info = [
+            (info["info"], info["created_at"]) for info in dal.get_info(user_id, "*")
+        ]
+        print("INFO: ", info)
+        response = GPT(time_preferences_model).chat_completion(
+            [
+                (
+                    "system",
+                    time_preferences_prompt.format(
+                        timeInfo=info,
+                    ),
+                )
+            ]
         )
+        timePreferences = json.loads(response)
+        print("Time Preferences :", response)
 
         # Get user calendar
-        occupied_slots = dal.get_occupied_slots(user_id)
-        occupied_slots = "\n".join(
-            json.dumps(occupied_slot) for occupied_slot in occupied_slots
-        )
+        notAvailableSlots = request.json["calendar"]
 
-        # Get plan duration
-        plan_duration = dal.get_plan_duration(user_id)
-
-        # Get plan periodicity
-        periodicity = dal.get_plan_periodicity(user_id)
-
-        # Generate schedule
         response = GPT(scheduler_model).chat_completion(
             [
                 (
                     "system",
                     scheduler_prompt.format(
-                        time_preferences=time_preferences,
-                        occupied_slots=occupied_slots,
-                        plan_duration=plan_duration,
-                        periodicity=periodicity,
+                        timePreferences=timePreferences,
+                        notAvailableSlots=notAvailableSlots,
+                        planInfo=planInfo,
                     ),
-                ),
+                )
             ]
         )
 
-        # Parse JSONL to list of dicts
-        schedule = [
-            json.loads(schedule)
-            for schedule in re.sub("\n+", "\n", response).splitlines()
-        ]
+        response = json.loads(response)
 
-        # Add schedule to database
-        schedule = [schedule | {"user_id": user_id} for schedule in schedule]
-        dal.add_schedule(schedule)
+        for key in response["scheduledDays"].keys():
+            dal.update_schedule(plan_name=key, schedule=response["scheduledDays"][key])
 
-        # Return schedule
-        return jsonify({"schedule": schedule})
+        # Return shedule
+        return jsonify({"schedule": response})

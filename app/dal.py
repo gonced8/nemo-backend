@@ -128,6 +128,12 @@ class DAL:
             )
         return info.data
 
+    def update_schedule(self, plan_name: str, schedule: list[list]):
+        """Update schedule in plans table"""
+        self.supabase.table("plans").update({"schedule": schedule}).eq(
+            "plan_name", plan_name
+        ).execute()
+
     def add_info(self, info) -> None:
         """Add info to info table"""
         self.supabase.table("info").insert(info).execute()
