@@ -155,5 +155,16 @@ class DAL:
             "id", user_id
         ).execute()
 
+    def reset_user(self, user_id: str):
+        """Reset user in users table"""
+        self.supabase.table("users").delete().eq("id", user_id).execute()
+        print("User deleted from User's Table")
+        self.supabase.table("messages").delete().eq("user_id", user_id).execute()
+        print("User deleted from Messages Table")
+        self.supabase.table("info").delete().eq("user_id", user_id).execute()
+        print("User deleted from Info Table")
+        self.supabase.table("plans").delete().eq("user_id", user_id).execute()
+        print("User deleted from Plans Table")
+
 
 dal = DAL()

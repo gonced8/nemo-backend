@@ -24,3 +24,14 @@ class Users:
             return jsonify({"message": "User doesn't exist", "user_id": None})
         else:
             return jsonify({"message": "User exists", "user_id": user["id"]})
+
+    @staticmethod
+    def reset(user_id: str):
+        """Reset user"""
+        user = dal.get_user(user_id=user_id)
+        if user is None:
+            return jsonify({"message": "User doesn't exist", "user_id": None})
+        else:
+            dal.reset_user(user_id=user_id)
+            username = user["username"]
+            return jsonify({"message": f"User {username} Deleted"})
