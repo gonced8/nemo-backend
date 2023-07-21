@@ -49,3 +49,27 @@ retrievedFacts and personalityType is not additive and should not repeat between
 Information that you know about the user:
 {info}
 """
+# Scheduler
+scheduler_model = "gpt-4"
+scheduler_prompt = """Act as a scheduling agent. You need to schedule a training plan compliant with the information provided to you.
+
+Here is some information about the user time preferences:
+{timePreferences}
+
+Taking into account that:
+1)Do not schedule training plans before 9am and after 10 pm
+2)User's calendar slots not available:
+{notAvailableSlots}
+3)Plans duration and regularity: 
+{planInfo} 
+4)Trainings cannot happen in consecutive days
+
+Return only a JSON with the format {{"scheduledDays":{{"plan": [ array(dayOfWeek, hourInterval,)}}}}.
+"""
+# TimePreferences
+time_preferences_model = "gpt-4"
+time_preferences_prompt = """Choose the information entries that are related with time restrictions and time preferences. Don't return entries that contradict each other, always pick the most recent one.
+
+{timeInfo}
+
+Return a JSON file with the format with the key timeInfo and a list of chosen information."""
