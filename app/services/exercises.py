@@ -14,11 +14,24 @@ from app.services.gpt import GPT
 
 class Exercises:
     @staticmethod
-    def generate():
+    def get():
+        """Get exercises from database."""
+        exercises = dal.get_exercises()
+        return jsonify({"exercises": exercises})
+
+    @staticmethod
+    def add():
+        """Add exercises to database."""
+        exercises = request.json["exercises"]
+        dal.add_exercise(exercises)
+        return jsonify({"exercises": exercises})
+
+    @staticmethod
+    def generate(n: int = 1):
         """Generate n new exercises and returns.
         (n defaults to 1)
         """
-        n: int = request.args.get("n", 1)
+        n: int = request.args.get("n", n)
 
         # Get existing exercises names
         exercises_names = ", ".join(dal.get_exercises_names())
@@ -41,14 +54,5 @@ class Exercises:
             for exercise in re.sub("\n+", "\n", response).splitlines()
         ]
 
-        # Add exercises to database
-        dal.add_exercise(exercises)
-
         # Return exercises
-        return jsonify({"exercises": exercises})
-
-    @staticmethod
-    def get():
-        """Get exercises from database."""
-        exercises = dal.get_exercises()
         return jsonify({"exercises": exercises})

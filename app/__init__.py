@@ -20,8 +20,9 @@ def create_app() -> Flask:
     app.add_url_rule("/users/<user_id>/chat", "chat", Chat.chat, methods=["POST"])
     # Exercises
     app.add_url_rule("/exercises", "exercises.get", Exercises.get, methods=["GET"])
+    app.add_url_rule("/exercises", "exercises.add", Exercises.get, methods=["POST"])
     app.add_url_rule(
-        "/exercises", "exercises.generate", Exercises.generate, methods=["POST"]
+        "/exercises/generate", "exercises.generate", Exercises.generate, methods=["GET"]
     )
     # Onboarding
     app.add_url_rule("/users", "user.add", Users.add, methods=["POST"])
@@ -31,8 +32,15 @@ def create_app() -> Flask:
     )
     # Plans
     app.add_url_rule("/users/<user_id>/plans", "plans.get", Plans.get, methods=["GET"])
+    app.add_url_rule("/users/<user_id>/plans", "plans.add", Plans.add, methods=["POST"])
     app.add_url_rule(
-        "/users/<user_id>/plans", "users.generate", Plans.generate, methods=["POST"]
+        "/users/<user_id>/plans/generate",
+        "plans.generate",
+        Plans.generate,
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/users/<user_id>/plans/chat", "plans.chat", Plans.chat, methods=["POST"]
     )
     # Scheduler
     app.add_url_rule(
