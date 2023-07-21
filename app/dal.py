@@ -1,5 +1,6 @@
 import os
 import uuid
+
 from dotenv import load_dotenv
 from supabase import Client, create_client
 
@@ -163,6 +164,35 @@ class DAL:
             for table in tables
         ]
         print(f"Deleted Tables: {tables} for user {user_id}")
+
+    def add_planner_chats(self, message):
+        """Add planner chats to planner_chats table"""
+        message = self.supabase.table("planner_chats").insert(message).execute()
+        return message.data
+
+    def get_planner_chats_last_chat_id(self, user_id: str):
+        """Get last chat_id from user_id in planner_chats table"""
+        last_chat_id = (
+            self.supabase.table("planner_chats")
+            .select("chat_id")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+            .data[0]["chat_id"]
+        )
+        return last_chat_id
+
+    def get_planner_chats_by_chat_id(self, chat_id: str):
+        """Get planner chats from user_id that match the last chat_id"""
+        messages = (
+            self.supabase.table("planner_chats")
+            .select("*")
+            .eq("chat_id", chat_id)
+            .execute()
+        )
+
+        return messages.data
 
 
 dal = DAL()

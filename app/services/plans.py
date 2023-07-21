@@ -96,35 +96,61 @@ class Plans:
         # Read query parameters
         start: bool = request.args.get("start", start)
 
-        # Get existing exercises
-        exercises = dal.get_exercises()
+        # Read request body
+        user_input: dict = request.json if request.data else None
 
-        # Format exercises to string
-        exercises = [
-            {
-                k: v
-                for k, v in exercise.items()
-                if k
-                in [
-                    "exercise_name",
-                    "description",
-                    "difficulty",
-                    "repetitions",
-                    "estimated_duration",
-                    "target",
-                ]
-            }
-            for exercise in exercises
-        ]
-        exercises = "\n".join(json.dumps(exercise) for exercise in exercises)
+        # Update start flag
+        start = start or not user_input
 
-        if not start:
-            # Get previous messages
-            ...
-        else:
+        # First message
+        if start:
+            # Get existing exercises
+            exercises = dal.get_exercises()
+
+            # Format exercises to string
+            exercises = [
+                {
+                    k: v
+                    for k, v in exercise.items()
+                    if k
+                    in [
+                        "exercise_name",
+                        "description",
+                        "difficulty",
+                        "repetitions",
+                        "estimated_duration",
+                        "target",
+                    ]
+                }
+                for exercise in exercises
+            ]
+            exercises = "\n".join(json.dumps(exercise) for exercise in exercises)
+
+            # Format messages to GPT
             messages = [
                 ("system", plans_chat_system_prompt.format(exercises=exercises))
             ]
+
+        # Other messages
+        else:
+            # Get chat_id from latest messages in database
+            chat_id = dal.get_planner_chats_last_chat_id(user_id)
+
+            # Get previous messages
+            chat = dal.get_planner_chats_by_chat_id(chat_id)
+
+            # Format messages to GPT
+            messages = [
+                (
+                    message["role"],
+                    json.dumps(message["message"], indent=4, ensure_ascii=False),
+                )
+                for message in chat
+            ]
+            messages.append(
+                ("user", json.dumps(user_input, indent=4, ensure_ascii=False))
+            )
+            print(*messages, sep="\n")
 
         # Generate response
         response = GPT(plans_chat_model).chat_completion(messages)
@@ -134,13 +160,43 @@ class Plans:
         response.pop("finish", None)
 
         # Add response to messages database
-        message = {
-            "user_id": user_id,
-            "agent": "plans",
-            "message": response,
-            "role": "assistant",
-        }
-        message = dal.add_message(message)
+        # First message
+        if start:
+            # Add system prompt
+            message = dal.add_planner_chats(
+                {"user_id": user_id, "role": messages[0][0], "message": messages[0][1]}
+            )
+            chat_id = message[0]["chat_id"]
+
+            # Add assistant's response
+            dal.add_planner_chats(
+                {
+                    "user_id": user_id,
+                    "chat_id": chat_id,
+                    "role": "assistant",
+                    "message": response,
+                }
+            )
+
+        # Other messages
+        else:
+            # Add user message and assistant response
+            chat_id = chat[0]["chat_id"]
+            chat = [
+                {
+                    "user_id": user_id,
+                    "chat_id": chat_id,
+                    "role": "user",
+                    "message": user_input,
+                },
+                {
+                    "user_id": user_id,
+                    "chat_id": chat_id,
+                    "role": "assistant",
+                    "message": response,
+                },
+            ]
+            dal.add_planner_chats(chat)
 
         # Return plan
         return jsonify(response)
