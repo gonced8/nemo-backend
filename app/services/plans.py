@@ -25,7 +25,7 @@ class Plans:
     def add(user_id: str):
         """Add plans to database."""
         plans: dict = request.json["plans"]
-        dal.add_plans(plans)
+        dal.add_plans(plans | {"user_id": user_id})
         return jsonify({"plans": plans})
 
     @staticmethod
