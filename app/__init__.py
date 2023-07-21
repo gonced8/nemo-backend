@@ -38,5 +38,9 @@ def create_app() -> Flask:
     app.add_url_rule(
         "/scheduler/<user_id>", "scheduler.call", Scheduler.call, methods=["GET"]
     )
+    # User Reset
+    app.add_url_rule(
+        "/users/<user_id>/reset", "user.reset", Users.reset, methods=["POST"]
+    )
 
     return app
