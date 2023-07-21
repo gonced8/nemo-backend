@@ -1,6 +1,8 @@
 from flask import jsonify, request
-
+import json
 from app.dal import dal
+from app.services.gpt import GPT
+from app.services.agents import notification_model, notification_prompt
 
 
 class Users:
@@ -36,3 +38,24 @@ class Users:
             dal.reset_user(user_id=user_id, tables=tables)
             username = user["username"]
             return jsonify({"message": f"User {username} Deleted"})
+
+    @staticmethod
+    def notifications(user_id: str):
+        """Get user notifications"""
+        currentHour = request.json["current_hour"]
+        info = dal.get_info(user_id=user_id, agent="*")
+        info = [(info["info"], info["created_at"]) for info in info]
+        response = GPT(notification_model).chat_completion(
+            (
+                [
+                    (
+                        "system",
+                        notification_prompt.format(currentHour=currentHour, info=info),
+                    )
+                ]
+            )
+        )
+
+        notifications = json.loads(response)
+
+        return jsonify({"notifications": notifications})

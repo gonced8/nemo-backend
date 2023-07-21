@@ -58,5 +58,11 @@ def create_app() -> Flask:
     app.add_url_rule(
         "/users/<user_id>/reset", "user.reset", Users.reset, methods=["POST"]
     )
+    app.add_url_rule(
+        "/users/<user_id>/notifications",
+        "user.notifications",
+        Users.notifications,
+        methods=["GET"],
+    )
 
     return app
