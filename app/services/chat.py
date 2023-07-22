@@ -91,14 +91,17 @@ class Chat:
             dal.add_info(persona_info)
 
         if actionTake:
-            action_info = {
-                "message_id": message_id,
-                "call_id": next_question_id,
-                "user_id": user_id,
-                "info": actionTake,
-                "agent": "chat",
-                "tag": "action",
-            }
+            action_info = [
+                {
+                    "message_id": message_id,
+                    "call_id": next_question_id,
+                    "user_id": user_id,
+                    "info": action,
+                    "agent": "chat",
+                    "tag": "action",
+                }
+                for action in actionTake
+            ]
             dal.add_info(action_info)
 
         return jsonify({"message": nextQuestion})

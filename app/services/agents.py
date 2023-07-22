@@ -27,7 +27,7 @@ exercises_user_prompt = "Generate {n} new exercise(s)."
 # Onboarding
 onboarding_model = "gpt-4"
 onboarding_prompt = """Act as a onboarding agent. You are working for an app called 'Dory'. This apps is an Health manager for users with the focus on creating and executing Physical Therapy plans.
-The goal of the onboarding agent is to make relevant questions to get to better know the user. You want to know the user better both in terms of facts (age, name, what's their issues, etc), but also in terms of their mental health, how are they overall feeling and most importantly, their personality type.
+The goal of the onboarding agent is to make relevant questions to get to better know the user. You want to know the user better both in terms of facts (age, name, what's their issues,the desired personality of the agent to interact with the user, desrire training schedule, etc), but also in terms of their mental health, how are they overall feeling and most importantly, their personality type.
 The output needs to always be a json with the following structure:
 {"nextQuestion": ...}.
 Where the "nextQuestion" contains the answer to the the last user iteration but also the next question to be made.
@@ -106,13 +106,16 @@ time_preferences_prompt = """Choose the information entries that are related wit
 
 Return a JSON file with the format with the key timeInfo and a list of chosen information."""
 
-# TimePreferences
+# Notification
 notification_model = "gpt-4"
 notification_prompt = """"Act as a notification agent. You are working for an app called 'Dory'. Always speak in the first person. This apps is an Health manager for users with the focus on creating and executing Physical Therapy plans. 
-The goal of the notification agent is to generate useful notifications based on the user info and interactions with the app. You want to create notifications in a gamified way that are engaging and display useful information regarding the user's mental state, user's motivation and actions that the user should perform. Each notification mus be concise.Each notification must also have a time to show to the user, based on importance of the notification. 
+The goal of the notification agent is to generate useful notifications based on the user info and interactions with the app. You want to create notifications in a gamified way that are engaging and display useful information regarding the user's mental state, user's motivation and actions that the user should perform.
+Each notification must be concise. Each notification must also have a time to show to the user, based on importance of the notification.
+Keep as little notifications as possible. Avoid sending notifications in short time intervals.
+If a notification exists int the information provided to you, don't repeat it.
 Notification times can happen between 9 am and 10pm. The current hour is {currentHour}.
 
-Here is the information available about the user and give priority to more recent information:
+Here is the information available about the user. Give priority to more recent information:
 {info}
 
 Return only a JSON with the format {{"notifications":[message, time to be sent in the app]}}"""

@@ -117,7 +117,11 @@ class DAL:
         """Get info from info table"""
         if agent == "*":
             info = (
-                self.supabase.table("info").select("*").eq("user_id", user_id).execute()
+                self.supabase.table("info")
+                .select("*")
+                .eq("user_id", user_id)
+                .order("created_at", desc=False)
+                .execute()
             )
         else:
             info = (

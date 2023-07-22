@@ -59,3 +59,15 @@ class Users:
         notifications = json.loads(response)
 
         return jsonify({"notifications": notifications})
+
+    @staticmethod
+    def info(user_id: str):
+        """Add info to info table"""
+        info = request.json["info"]
+        info = {
+            "user_id": user_id,
+            "info": info,
+            "agent": "frontend",
+        }
+        dal.add_info(info=info)
+        return jsonify({"message": "Info added"})
