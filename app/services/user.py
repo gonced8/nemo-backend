@@ -13,9 +13,9 @@ class Users:
         user = dal.get_user(username)
         if user is None:
             user = dal.add_user(username)
-            return jsonify({"message": "User added", "user_id": user["id"]})
+            return jsonify({"message": "User added", "user_id": user["id"], "onboarding_status": user["onboarding_status"]})
         else:
-            return jsonify({"message": "User already exists", "user_id": user["id"]})
+            return jsonify({"message": "User already exists", "user_id": user["id"], "onboarding_status": user["onboarding_status"]})
 
     @staticmethod
     def get():

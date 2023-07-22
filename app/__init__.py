@@ -56,7 +56,7 @@ def create_app() -> Flask:
         "/users/<user_id>/plan-executor",
         "plan-executor.chat",
         PlanExecutor.chat,
-        methods=["GET"],
+        methods=["POST"],
     )
     # Plans
     app.add_url_rule("/users/<user_id>/plans", "plans.get", Plans.get, methods=["GET"])
