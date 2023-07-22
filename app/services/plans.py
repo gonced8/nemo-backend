@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime
 
 from flask import jsonify, request
 
@@ -34,6 +35,10 @@ class Plans:
         (n defaults to 1)
         """
         n: int = request.args.get("n", n)
+
+        # Read user info from database
+        info = dal.get_info(user_id, "*")
+        info = "\n".join([f"[{entry['created_at']}] {entry['info']}" for entry in info])
 
         # Get existing exercises
         exercises = dal.get_exercises()
@@ -74,7 +79,12 @@ class Plans:
             [
                 (
                     "system",
-                    plans_system_prompt.format(exercises=exercises, plans=plans),
+                    plans_system_prompt.format(
+                        info=info,
+                        current_time=datetime.utcnow(),
+                        exercises=exercises,
+                        plans=plans,
+                    ),
                 ),
                 ("user", plans_user_prompt.format(n=n)),
             ]
@@ -104,6 +114,12 @@ class Plans:
 
         # First message
         if start:
+            # Read user info from database
+            info = dal.get_info(user_id, "*")
+            info = "\n".join(
+                [f"[{entry['created_at']}] {entry['info']}" for entry in info]
+            )
+
             # Get existing exercises
             exercises = dal.get_exercises()
 
@@ -128,7 +144,12 @@ class Plans:
 
             # Format messages to GPT
             messages = [
-                ("system", plans_chat_system_prompt.format(exercises=exercises))
+                (
+                    "system",
+                    plans_chat_system_prompt.format(
+                        info=info, current_time=datetime.utcnow(), exercises=exercises
+                    ),
+                )
             ]
 
         # Other messages
@@ -150,7 +171,6 @@ class Plans:
             messages.append(
                 ("user", json.dumps(user_input, indent=4, ensure_ascii=False))
             )
-            print(*messages, sep="\n")
 
         # Generate response
         response = GPT(plans_chat_model).chat_completion(messages)
@@ -164,7 +184,7 @@ class Plans:
         if start:
             # Add system prompt
             message = dal.add_planner_chats(
-                {"user_id": user_id, "role": messages[0][0], "message": messages[0][1]}
+                {"user_id": user_id, "role": "system", "message": messages[0][1]}
             )
             chat_id = message[0]["chat_id"]
 

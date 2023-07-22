@@ -1,5 +1,5 @@
 import json
-import re
+from datetime import datetime
 
 from flask import jsonify, request
 
@@ -13,8 +13,6 @@ class PlanExecutor:
     def chat(user_id: str):
         """Chat with the user to execute the plan."""
 
-        # TODO: use info from user_id
-
         # Read plan and messages from request body
         user_plan = request.json["user_plan"]
         messages = request.json["messages"]
@@ -26,22 +24,25 @@ class PlanExecutor:
             for role, text in messages
         ]
 
+        # Read user info from database
+        info = dal.get_info(user_id, "*")
+        info = "\n".join([f"[{entry['created_at']}] {entry['info']}" for entry in info])
+
         # Add system instruction
         messages.insert(
             0,
             (
                 "system",
-                plan_executor_prompt.format(user_plan=user_plan),
+                plan_executor_prompt.format(
+                    info=info, current_time=datetime.utcnow(), user_plan=user_plan
+                ),
             ),
         )
-
-        print(messages)
 
         # Get response from GPT
         response = GPT(plan_executor_model).chat_completion(messages)
 
         # Parse response
-        print(response)
         response = json.loads(response)
 
         return jsonify(response)
