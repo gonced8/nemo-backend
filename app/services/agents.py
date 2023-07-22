@@ -39,14 +39,16 @@ The onboarding is to have a general understanding of the user, not yet to give t
 The questions should be limited, at most 10."""
 
 # Persona
-persona_model = "gpt-3.5-turbo"
+persona_model = "gpt-4"
 persona_prompt = """Act as a persona summarizer agent. You are working for an app called 'Dory'. This apps is an Health manager for users with the focus on creating and executing Physical Therapy plans personalized to a user.
 This app continuously extracts information about the user's personality and relevant events.
 
 Here is the information extracted for a specific user:
 {info}
 
-Generate a summary of this user to display in the app. Write in a brief text based on the information provided."""
+Generate a summary of this user to display in the app. Write in a brief text based on the information provided.
+Estimate the risk of about the potential dropout from the user based on the info on a scale of 0 to 100.
+Generate only JSON with the format {{summary: str, dropout_risk: int}}, nothing else should be returned."""
 
 # Plan Executor
 plan_executor_model = "gpt-4"

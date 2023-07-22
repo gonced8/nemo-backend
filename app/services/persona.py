@@ -1,3 +1,4 @@
+import json
 from flask import jsonify, request
 
 from app.dal import dal
@@ -27,12 +28,22 @@ class Persona:
         info = dal.get_info(user_id, "*")
 
         # Format info
-        info = "- " + "\n- ".join([entry["info"] for entry in info])
+        info = "\n".join([f"[{entry['created_at']}] {entry['info']}" for entry in info])
 
         # Make prompt
         messages = [("system", persona_prompt.format(info=info))]
 
         # Generate persona
         response = GPT(persona_model).chat_completion(messages)
-
-        return jsonify({"persona": response})
+        response = json.loads(response)
+        dropout_risk = response["dropout_risk"]
+        info = [
+            {
+                "user_id": user_id,
+                "info": f"The dropout risk is {dropout_risk}.",
+                "agent": "persona",
+                "tag": "dropout_risk",
+            }
+        ]
+        dal.add_info(info)
+        return jsonify(response)
