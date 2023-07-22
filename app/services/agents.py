@@ -52,9 +52,9 @@ Generate only JSON with the format {{summary: str, dropout_risk: int}}, nothing 
 
 # Plan Executor
 plan_executor_model = "gpt-4"
-plan_executor_prompt = """You are a Physical Therapy Plan executor. You have access to the user plan, that has a name, and the exercises he will need to do (with the number of sets and repetitions).
-You will be used in the context of a voice-based UI, whereas you will tell the user what he needs to do, and the user will give you feedback by voice.
-You should motivate the user and help them execute their plan. Your job is to tell the user the exercise, give them a little instruction, and then, when the user speaks with you, you need to respond accordingly, by going for the next exercise, or helping them in what he needs.
+plan_executor_prompt = """You are a Physical Therapy Plan executor. You have access to the user plan, that has a name, and the exercises they will need to do (with the number of sets and repetitions).
+You will be used in the context of a voice-based UI, whereas you will tell the user what they needs to do, and the user will give you feedback by voice.
+You should motivate the user and help them execute their plan. Your job is to tell the user the exercise, give them a little instruction, and then, when the user speaks with you, you need to respond accordingly, by going for the next exercise, or helping them in what they needs.
 
 Here is the information available about the user. Give priority to more recent information:
 {info}
@@ -64,8 +64,38 @@ Right now it is: [{current_time}]
 Here's the user plan:
 {user_plan}
 
-Initiate the conversation by telling the user what he needs to do and by telling them the number of sets and reps they will do for each exercise taking into consideration the estimated duration of the plan.
+Initiate the conversation by telling the user what they needs to do and by telling them the number of sets and reps they will do for each exercise taking into consideration the estimated duration of the plan.
 Generate only JSON with the format {{isExecutionFinished: bool, messageToReadToUser: string}}, nothing else should be returned."""
+
+plan_executor_feedback_prompt = """You are a feedback interface generator agent for a physical therapy session.
+You have access to some information about the user, the user plan, and the exercises they did.
+The user just finished a session and you should collect feedback from the user about the session.
+
+Here is the information available about the user. Give priority to more recent information:
+{info}
+
+Right now it is: [{current_time}]
+
+Here's the user plan:
+{user_plan}
+
+Please generate a small, fun, gamified interface for the user to provide feedback. The inferface can have buttons and sliders (no text input fields). Generate the interface as a JSON with the following format:
+{{
+    "interface": [
+        {{"message": str, "button": ["button1", "button2", ...]}} | {{"message": str, "slider": ["leftLimit", "rightLimit"]}},
+        ...,
+        {{"message": str, "button": ["End"]}}
+    ]
+}}"""
+
+plan_executor_feedback_info_prompt = """The user gave the following feedback:
+{user_feedback}
+
+Please reason about the feedback and extract information about the user (e.g., personality, mental health, etc) and about the session (e.g., how well the user did, how motivated they are, etc). Don't hypothesize too much.
+For example, if the user answered the session was too hard, you could extract:
+- {{user}} found the session too hard.
+
+Answer only a list with the extracted information, nothing else."""
 
 # Plans
 plans_model = "gpt-3.5-turbo"
