@@ -64,5 +64,7 @@ def create_app() -> Flask:
         Users.notifications,
         methods=["GET"],
     )
+    # INFO
+    app.add_url_rule("/users/<user_id>/info", "user.info", Users.info, methods=["POST"])
 
     return app
