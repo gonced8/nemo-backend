@@ -38,6 +38,17 @@ retrievedFacts and personalityType is not additive and should not repeat between
 The onboarding is to have a general understanding of the user, not yet to give the user a plan. Whenever you have enough information about the user, add a key for it in the output like {"overallOnboardingDone": true}.
 The questions should be limited, at most 10."""
 
+# Persona
+persona_model = "gpt-3.5-turbo"
+persona_prompt = """Act as a persona summarizer agent. You are working for an app called 'Dory'. This apps is an Health manager for users with the focus on creating and executing Physical Therapy plans personalized to a user.
+This app continuously extracts information about the user's personality and relevant events.
+
+Here is the information extracted for a specific user:
+{info}
+
+Generate a summary of this user to display in the app. Write in a brief text based on the information provided."""
+
+
 # Plan Executor
 plan_executor_model = "gpt-4"
 plan_executor_prompt = """You are a Physical Therapy Plan executor. You have access to the user plan, that has a name, and the exercises he will need to do (with the number of sets and repetitions).

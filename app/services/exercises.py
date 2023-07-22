@@ -46,7 +46,6 @@ class Exercises:
                 ("user", exercises_user_prompt.format(n=n)),
             ]
         )
-        print(response)
 
         # Parse JSONL to list of dicts
         exercises = [

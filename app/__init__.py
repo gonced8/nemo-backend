@@ -3,6 +3,7 @@ from flask import Flask
 from app.services.chat import Chat
 from app.services.exercises import Exercises
 from app.services.onboarding import Onboarding
+from app.services.persona import Persona
 from app.services.plan_executor import PlanExecutor
 from app.services.plans import Plans
 from app.services.scheduler import Scheduler
@@ -30,6 +31,25 @@ def create_app() -> Flask:
     app.add_url_rule("/users", "user.get", Users.get, methods=["GET"])
     app.add_url_rule(
         "/users/<user_id>/onboarding", "onboarding", Onboarding.chat, methods=["POST"]
+    )
+    # Persona
+    app.add_url_rule(
+        "/users/<user_id>/persona",
+        "persona.get",
+        Persona.get,
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/users/<user_id>/persona",
+        "persona.add",
+        Persona.add,
+        methods=["POST"],
+    )
+    app.add_url_rule(
+        "/users/<user_id>/persona/generate",
+        "persona.generate",
+        Persona.generate,
+        methods=["GET"],
     )
     # Plan Executor
     app.add_url_rule(
