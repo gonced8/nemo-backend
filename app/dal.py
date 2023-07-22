@@ -198,5 +198,17 @@ class DAL:
 
         return messages.data
 
+    def get_persona(self, user_id: str):
+        """Get persona from user_id in personas table"""
+        persona = (
+            self.supabase.table("personas").select("*").eq("user_id", user_id).execute()
+        )
+        return persona.data
+
+    def add_persona(self, persona: dict):
+        """Add persona to personas table"""
+        persona = self.supabase.table("personas").insert(persona).execute()
+        return persona.data
+
 
 dal = DAL()
