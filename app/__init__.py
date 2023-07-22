@@ -58,6 +58,18 @@ def create_app() -> Flask:
         PlanExecutor.chat,
         methods=["POST"],
     )
+    app.add_url_rule(
+        "/users/<user_id>/plan-executor/feedback",
+        "plan-executor.feedback",
+        PlanExecutor.feedback_interface,
+        methods=["POST"],
+    )
+    app.add_url_rule(
+        "/users/<user_id>/plan-executor/feedback/info",
+        "plan-executor.feedback_info",
+        PlanExecutor.feedback_info,
+        methods=["POST"],
+    )
     # Plans
     app.add_url_rule("/users/<user_id>/plans", "plans.get", Plans.get, methods=["GET"])
     app.add_url_rule("/users/<user_id>/plans", "plans.add", Plans.add, methods=["POST"])

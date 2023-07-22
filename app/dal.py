@@ -139,9 +139,10 @@ class DAL:
             "plan_name", plan_name
         ).execute()
 
-    def add_info(self, info) -> None:
+    def add_info(self, info) -> list[dict]:
         """Add info to info table"""
-        self.supabase.table("info").insert(info).execute()
+        info = self.supabase.table("info").insert(info).execute()
+        return info.data
 
     def get_info_by_id(self, message_id: str, tag: str) -> dict:
         """Get info by id from info table"""
