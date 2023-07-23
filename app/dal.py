@@ -129,6 +129,7 @@ class DAL:
                 .select("*")
                 .eq("user_id", user_id)
                 .eq("agent", agent)
+                .order("created_at", desc=False)
                 .execute()
             )
         return info.data

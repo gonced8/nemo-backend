@@ -1,5 +1,6 @@
 import json
 import time
+
 from flask import jsonify, request
 
 from app.dal import dal
@@ -76,7 +77,7 @@ class Users:
         return jsonify(notifications)
 
     @staticmethod
-    def info(user_id: str):
+    def add_info(user_id: str):
         """Add info to info table"""
         info = request.json["info"]
         info = {
@@ -86,3 +87,17 @@ class Users:
         }
         dal.add_info(info=info)
         return jsonify({"message": "Info added"})
+
+    @staticmethod
+    def get_info(user_id: str):
+        """Get info from info table sorted by created_at in descending order"""
+        info = dal.get_info(user_id=user_id, agent="*")
+        info = [
+            {
+                k: v
+                for k, v in entry.items()
+                if k in ["agent", "created_at", "id", "info", "tag"]
+            }
+            for entry in info[::-1]
+        ]
+        return jsonify({"info": info})

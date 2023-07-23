@@ -1,5 +1,6 @@
 from flask import Flask
 
+from app.services.apple_health_kit import AppleHealthKit
 from app.services.chat import Chat
 from app.services.exercises import Exercises
 from app.services.onboarding import Onboarding
@@ -8,7 +9,6 @@ from app.services.plan_executor import PlanExecutor
 from app.services.plans import Plans
 from app.services.scheduler import Scheduler
 from app.services.user import Users
-from app.services.apple_health_kit import AppleHealthKit
 
 
 def create_app() -> Flask:
@@ -98,7 +98,12 @@ def create_app() -> Flask:
         methods=["GET"],
     )
     # INFO
-    app.add_url_rule("/users/<user_id>/info", "user.info", Users.info, methods=["POST"])
+    app.add_url_rule(
+        "/users/<user_id>/info", "user.add_info", Users.add_info, methods=["POST"]
+    )
+    app.add_url_rule(
+        "/users/<user_id>/info", "user.get_info", Users.get_info, methods=["GET"]
+    )
 
     # APPLE HEALTH KIT
     app.add_url_rule(
