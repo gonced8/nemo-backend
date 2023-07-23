@@ -77,7 +77,7 @@ class DAL:
         message = self.supabase.table("messages").insert(message).execute()
         return message.data
 
-    def add_exercise(self, exercise: list | dict):
+    def add_exercise(self, exercise):
         """Adds exercise to exercises table"""
         print(exercise)
         self.supabase.table("exercises").insert(exercise).execute()

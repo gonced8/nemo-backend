@@ -130,3 +130,14 @@ Here is the information available about the user. Give priority to more recent i
 {info}
 
 Return only a JSON with the format {{"notifications":[message, time to be sent in the app]}}"""
+
+
+apple_health_kit_model = "gpt-4"
+apple_health_kit_prompt = """
+You are a general Health assistant.
+
+You receive information from Apple Health, and you will provide tips and tricks given the user info. These infos should be in the JSON format of: {title: string, description: string, advantadgeTheUserWillGain: string, levelOfImportance: type}, where type can be light, moderate or severe.
+
+
+Return an array of these json objects and nothing more.
+"""

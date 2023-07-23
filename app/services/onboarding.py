@@ -121,4 +121,6 @@ class Onboarding:
                 }
             )
         else:
-            return jsonify({"message": "Onboarding already done"})
+            return jsonify(
+                {"message": "Onboarding already done", "overallOnboardingDone": True}
+            )

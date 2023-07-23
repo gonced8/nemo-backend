@@ -13,9 +13,21 @@ class Users:
         user = dal.get_user(username)
         if user is None:
             user = dal.add_user(username)
-            return jsonify({"message": "User added", "user_id": user["id"], "onboarding_status": user["onboarding_status"]})
+            return jsonify(
+                {
+                    "message": "User added",
+                    "user_id": user["id"],
+                    "onboarding_status": user["onboarding_status"],
+                }
+            )
         else:
-            return jsonify({"message": "User already exists", "user_id": user["id"], "onboarding_status": user["onboarding_status"]})
+            return jsonify(
+                {
+                    "message": "User already exists",
+                    "user_id": user["id"],
+                    "onboarding_status": user["onboarding_status"],
+                }
+            )
 
     @staticmethod
     def get():
@@ -33,11 +45,11 @@ class Users:
         tables = request.json["tables"]
         user = dal.get_user(user_id=user_id)
         if user is None:
-            return jsonify({"message": "User doesn't exist", "user_id": None})
+            return jsonify({"message": "User doesn't exist"})
         else:
             dal.reset_user(user_id=user_id, tables=tables)
             username = user["username"]
-            return jsonify({"message": f"User {username} Deleted"})
+            return jsonify({"message": f"User tables {username} deleted"})
 
     @staticmethod
     def notifications(user_id: str):
