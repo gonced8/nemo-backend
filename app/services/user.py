@@ -47,11 +47,11 @@ class Users:
         tables = request.json["tables"]
         user = dal.get_user(user_id=user_id)
         if user is None:
-            return jsonify({"message": "User doesn't exist", "user_id": None})
+            return jsonify({"message": "User doesn't exist"})
         else:
             dal.reset_user(user_id=user_id, tables=tables)
             username = user["username"]
-            return jsonify({"message": f"User {username} Deleted"})
+            return jsonify({"message": f"User tables {username} deleted"})
 
     @staticmethod
     def notifications(user_id: str):

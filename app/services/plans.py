@@ -104,7 +104,9 @@ class Plans:
     @staticmethod
     def chat(user_id: str, start: bool = False):
         # Read query parameters
-        start: bool = request.args.get("start", start)
+        start: bool = request.args.get(
+            "start", default=True, type=lambda v: v.lower() == "true"
+        )
 
         # Read request body
         user_input: dict = request.json if request.data else None

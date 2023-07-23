@@ -8,6 +8,7 @@ from app.services.plan_executor import PlanExecutor
 from app.services.plans import Plans
 from app.services.scheduler import Scheduler
 from app.services.user import Users
+from app.services.apple_health_kit import AppleHealthKit
 
 
 def create_app() -> Flask:
@@ -98,5 +99,13 @@ def create_app() -> Flask:
     )
     # INFO
     app.add_url_rule("/users/<user_id>/info", "user.info", Users.info, methods=["POST"])
+
+    # APPLE HEALTH KIT
+    app.add_url_rule(
+        "/users/apple-health-kit",
+        "apple-health-kit.get",
+        AppleHealthKit.get,
+        methods=["GET"],
+    )
 
     return app
