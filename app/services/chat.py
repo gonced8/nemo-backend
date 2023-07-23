@@ -1,11 +1,10 @@
 import json
+
 from flask import jsonify, request
+
 from app.dal import dal
+from app.services.agents import chat_model, chat_prompt
 from app.services.gpt import GPT
-from app.services.agents import (
-    chat_model,
-    chat_prompt,
-)
 
 
 class Chat:

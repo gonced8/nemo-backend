@@ -1,2 +1,2 @@
-# dory-backend
-Backend for the Dory application developed for the Sword AI Challenge '23.
+# nemo-backend
+Backend for the Nemo application developed for the Sword AI Challenge '23.
