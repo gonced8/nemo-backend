@@ -47,4 +47,5 @@ class Persona:
             }
         ]
         dal.add_info(info)
+        print(response)
         return jsonify(response)

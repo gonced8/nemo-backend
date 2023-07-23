@@ -85,7 +85,7 @@ def create_app() -> Flask:
     )
     # Scheduler
     app.add_url_rule(
-        "/scheduler/<user_id>", "scheduler.call", Scheduler.call, methods=["GET"]
+        "/scheduler/<user_id>", "scheduler.call", Scheduler.call, methods=["POST"]
     )
     # User Reset
     app.add_url_rule(
@@ -105,7 +105,7 @@ def create_app() -> Flask:
         "/users/apple-health-kit",
         "apple-health-kit.get",
         AppleHealthKit.get,
-        methods=["GET"],
+        methods=["POST"],
     )
 
     return app
