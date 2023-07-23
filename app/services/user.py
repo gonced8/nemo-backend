@@ -1,5 +1,5 @@
 import json
-
+import time
 from flask import jsonify, request
 
 from app.dal import dal
@@ -56,7 +56,8 @@ class Users:
     @staticmethod
     def notifications(user_id: str):
         """Get user notifications"""
-        currentHour = request.json["current_hour"]
+        # get current hour like 22:00
+        currentHour = time.strftime("%H:%M", time.localtime())
         info = dal.get_info(user_id=user_id, agent="*")
         info = [(info["info"], info["created_at"]) for info in info]
         response = GPT(notification_model).chat_completion(
@@ -71,8 +72,8 @@ class Users:
         )
 
         notifications = json.loads(response)
-
-        return jsonify({"notifications": notifications})
+        print(notifications)
+        return jsonify(notifications)
 
     @staticmethod
     def info(user_id: str):

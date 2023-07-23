@@ -158,7 +158,14 @@ Taking into account that:
 {planInfo}
 4)Trainings cannot happen in consecutive days
 
-Return only a JSON with the format {{"scheduledDays":{{"plan": [ array(dayOfWeek, hourInterval,)}}}}."""
+Return only a JSON with the format:
+{{
+    "schedule": [
+            [str (plan name), str (day of week), str (hh:mm-hh:mm)],
+            ...
+        ]
+}}
+Remember JSON uses double quotes, thus escape the double quotes inside the values with a backslash."""
 
 # TimePreferences
 time_preferences_model = "gpt-4"
@@ -166,7 +173,14 @@ time_preferences_prompt = """Choose the information entries that are related wit
 
 {timeInfo}
 
-Return a JSON file with the format with the key timeInfo and a list of chosen information."""
+Return the chosen information in a JSON with the following format:
+{{
+    "timeInfo": [
+        [str (info), str (timestamp)],
+        ...
+    ]
+}}
+Remember JSON uses double quotes, thus escape the double quotes inside the values with a backslash."""
 
 # Notification
 notification_model = "gpt-4"
@@ -175,12 +189,18 @@ The goal of the notification agent is to generate useful notifications based on 
 Each notification must be concise. Each notification must also have a time to show to the user, based on importance of the notification.
 Keep as little notifications as possible. Avoid sending notifications in short time intervals.
 If a notification exists int the information provided to you, don't repeat it.
-Notification times can happen between 9 am and 10pm. The current hour is {currentHour}.
+Notification times can happen between 09:00 and 22:00. The current hour is {currentHour}.
 
 Here is the information available about the user. Give priority to more recent information:
 {info}
 
-Return only a JSON with the format {{"notifications":[message, time to be sent in the app]}}"""
+Return only a JSON with the format:
+{{
+    "notifications":[
+        [str (notification_text), str (hh:mm)],
+        ...
+    ]
+}}"""
 
 
 apple_health_kit_model = "gpt-4"

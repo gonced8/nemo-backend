@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from flask import jsonify, request
 
@@ -17,15 +18,9 @@ class Scheduler:
     def call(user_id: str):
         """Call the scheduler agent and returns a schedule for the user."""
 
-        # Get user plans
-        planInfo = [
-            (plan["plan_name"], plan["estimated_duration"])
-            for plan in dal.get_plans(user_id)
-        ]
-
         # Get user time preferences
         info = [
-            (info["info"], info["created_at"]) for info in dal.get_info(user_id, "*")
+            [info["info"], info["created_at"]] for info in dal.get_info(user_id, "*")
         ]
         print("INFO: ", info)
         response = GPT(time_preferences_model).chat_completion(
@@ -38,8 +33,17 @@ class Scheduler:
                 )
             ]
         )
+        print("resoonse kkkkk: ", response)
         timePreferences = json.loads(response)
-        print("Time Preferences :", response)
+        timePreferences = [elem[0] for elem in timePreferences["timeInfo"]]
+        print("Time Preferences :", *timePreferences, sep="\n")
+
+        # Get user plans
+        planInfo = [
+            [plan["plan_name"], plan["estimated_duration"]]
+            for plan in dal.get_plans(user_id)
+        ]
+        print(f"{planInfo=}")
 
         # Get user calendar
         notAvailableSlots = request.json["calendar"]
@@ -59,8 +63,12 @@ class Scheduler:
 
         response = json.loads(response)
 
-        for key in response["scheduledDays"].keys():
-            dal.update_schedule(plan_name=key, schedule=response["scheduledDays"][key])
+        response_dict = defaultdict(list)
+        for plan_name, *day_time in response["schedule"]:
+            response_dict[plan_name].append(day_time)
 
+        for plan_name, day_time_list in response_dict.items():
+            dal.update_schedule(plan_name=plan_name, schedule=day_time_list)
+        print("SCHEDULE: ", response)
         # Return shedule
-        return jsonify({"schedule": response})
+        return jsonify(response)
